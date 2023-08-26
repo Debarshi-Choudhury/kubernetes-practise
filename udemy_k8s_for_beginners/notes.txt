@@ -1,0 +1,68 @@
+kubectl get pods -o wide
+kubectl get nodes -o wide
+kubectl cluster-info
+
+kubectl run <pod_name> --image=<image_name>   #will create a pod
+kubectl run <pod_name> --image=<image_name> --dry-run=client -o yaml > pod-definition.yaml  #will give us the pod definition file 
+
+kubectl get pod <pod_name>
+kubectl describe pod <pod_name>
+kubectl edit pod <pod_name>
+kubectl delete pod <pod_name>
+
+//////////////////////////////////////////
+
+kubectl create -f <definition yaml file>
+kubectl apply -f <definition yaml file>
+
+kubectl get pod <pod_name> -o yaml > pod-definition.yaml #will create definition file for a running pod 
+
+//////////////////////////////////////////
+
+kubectl create -f replicaset-definition.yaml
+kubectl get replicaset   # shows all replicasets
+kubectl describe replicaset <replicaset_name>
+
+kubectl delete replicaset <replicaset_name>    # also deletes all underlying pods
+kubectl replace -f replicaset-definition.yaml  # replace/update a replicaset
+kubectl scale --replicas=6 -f replicaset-definition.yaml
+kubectl scale replicaset <replicaset_name> --replicas=6  
+kubectl edit replicaset <replicaset_name>
+
+////////////////////////////////////////////////
+
+kubectl create -f deployment-definition.yaml
+kubectl create -f deployment-definition.yaml --record  # change cause for revision 1 will have the create command
+kubectl create deployment <deployment_name> --image=<image_name> --replicas=<replica_count>
+kubectl get deployments   # deployments automatically creates replicasets which automatically creates pods
+kubectl get all
+kubectl describe deployment <deployment_name>
+kubectl get deployment <deployment_name>
+kubectl edit deployment <deployment_name> --record  # --record ensures that the change-cause is recorded in the rollout history
+
+////////////////////////////////////////////////////
+
+kubectl rollout status deployment/<deployment_name>
+kubectl rollout history deployment/<deployment_name>
+kubectl apply -f deployment-definition.yaml  # we can apply changes in no. of replicas, version of the image, labels of the pods etc.
+# Two deployment strategies are Recreate and RollingUpdate. By default k8s does a "rolling update" deployment instead of a "recreate" deployment
+kubectl set image deployment/<deployment_name> <container_name>=<new_image_name> --record
+kubectl rollout undo deployment/<deployment_name>
+kubectl delete deployment <deployment_name>
+
+////////////////////////////////////////////////////
+
+#Service can be of type NodePort, ClusterIP, LoadBalancer
+kubectl create -f service_definition.yaml
+kubectl get services
+
+minikube service <service_name> --url  # gives you the url of the service
+
+
+
+
+
+
+
+
+
