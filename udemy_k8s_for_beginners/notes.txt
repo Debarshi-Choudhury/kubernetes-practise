@@ -4,6 +4,8 @@ kubectl cluster-info
 
 kubectl run <pod_name> --image=<image_name>   #will create a pod
 kubectl run <pod_name> --image=<image_name> --dry-run=client -o yaml > pod-definition.yaml  #will give us the pod definition file 
+kubectl run <pod_name> --image=<image_name> --labels=<label_1_name>=<label_1_value>,<label_2_name>=<label_2_value> # adds label 
+kubectl run <pod_name> --image=<image_name> --port=<port_num> # expose a containerPort
 
 kubectl get pod <pod_name>
 kubectl describe pod <pod_name>
@@ -58,11 +60,27 @@ kubectl get services
 
 minikube service <service_name> --url  # gives you the url of the service
 
+////////////////////////////////////////////////////
 
+kubectl create namespace <namespace_name> --dry-run -o yaml
+kubectl get namespaces
+kubectl create -f definition_file.yaml -n <namespace_name> #create a kubernetes object in a certain namespace
+kubectl create namespace <namespace_name>
+kubectl create -f namespace_definition.yaml
+kubectl config set-context $(kubectl config current-context) -n <namespace_name>
+kubectl get pods --all-namespaces
 
+# When connecting to a sevice in a different namespace use this as a hostname: 
+<service_name>.<namespace_name>.svc.cluster.local
+# When connecting to a service in the same namespace, simply use the service_name
 
+///////////////////////////////////////////////////
 
+# imperative commands for services:
+kubectl expose pod redis --port=6379 --name redis-service --dry-run=client -o yaml # uses labels of pod as selectors
+kubectl create service clusterip redis --tcp=6379:6379 --dry-run=client -o yaml # this assumes selectors as app=redis
 
+kubectl expose pod nginx --port=80 --name nginx-service --type=NodePort --dry-run=client -o yaml # uses labels of pod as selectors. But you cannot specify the node-port
+kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml # this assumes selectors as app=nginx
 
-
-
+kubectl run httpd --image=httpd:alpine --port=80 --expose # creates a pod and exposes the pod by creating a clusterIP service of the same name
