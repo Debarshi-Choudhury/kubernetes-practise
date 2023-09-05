@@ -4,7 +4,7 @@ Add below in settings.json:
         "kubernetes": "*.yaml"
     }
 
-# config maps
+# k8s configmaps
 kubectl create configmap <configmap_name> --from-literal=<key>=<value> \ 
                                           --from-literal=<key>=<value> 
 kubectl create configmap <configmap_name> --from-file=<path_to_file>
@@ -29,6 +29,36 @@ kubectl describe configmaps
 
 (3) Volumes=>
   volumes:
-  - name: app-config-volumes
+  - name: app-config-volume
     configMap:
       name: app-config
+
+# k8s Secret
+kubectl create secret generic <secret_name> --from-literal=<key>=<value>
+kubectl create secret generic <secret_name> --from-file=<file_name>
+
+kubectl get secrets
+kubectl describe secret <secret_name>
+kubectl get secret <secret_name> -o yaml # This will show the encoded secret values
+
+kubectl create -f secret_definition.yaml # declarative method
+# While creating secrets using the declarative method, the secret values should be stored in an encoded format. Not needed when using the imperative method
+$ echo -n "password" | base64
+
+#Adding a secret while creating a pod:
+(1) envFrom:
+    - secretRef:
+        name: app-secret
+(2) single Env=>
+    env:
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: app-secret
+          key: DB_PASSWORD
+(3) Volume=>
+    volumes:
+    - name: app-secret-volume
+      secret:
+        secretName: app-secret
+
