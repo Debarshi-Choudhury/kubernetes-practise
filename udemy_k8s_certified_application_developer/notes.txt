@@ -62,3 +62,13 @@ $ echo -n "password" | base64
       secret:
         secretName: app-secret
 
+////////////////////////////////////////
+
+kubectl create serviceaccount <serviceaccount_name>
+kubectl get serviceaccount
+kubectl describe serviceaccount <serviceaccount_name>
+
+#each k8s namespace has a "default" service account created automatically
+kubectl create token <serviceaccount_name>  # creates a token for the particular serviceaccount
+
+
